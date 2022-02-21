@@ -80,3 +80,7 @@ MPP Engine is split up into 60 different nodes for processing.
 #### Data Partition Considerations
 
 ![Partition Considerations](.\images\synapse-analytics\partition-considerations.png)
+
+#### Sizing Partitions
+
+![Sizing Partitions](.\images\synapse-analytics\sizing-partitions.png)
