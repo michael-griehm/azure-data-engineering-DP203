@@ -1,0 +1,116 @@
+name: deploy-event-hub
+on: 
+  workflow_dispatch
+env:
+  REMOTE_STATE_RG: rg-data-model-demo-eastus2
+  REMOTE_STATE_SA: sadatamodeled
+  REMOTE_STATE_CONTAINER: data-model-remote-state-eastus2-demo
+  REMOTE_STATE_KEY: data-model.terraform.tfstate
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  plan:
+    name: 'plan deployments'
+    runs-on: ubuntu-latest
+    env:
+      ARM_TENANT_ID: ${{ secrets.TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
+      ARM_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+    steps:
+      - name: 'Checkout Repo'
+        uses: actions/checkout@v2
+      - name: 'Az CLI Login'
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ secrets.TENANT_ID }}
+          subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.CLIENT_ID }}
+      - name: 'Get Deployer Secret'
+        id: get-deployer-secret
+        uses: azure/get-keyvault-secrets@v1
+        with:
+          keyvault: ${{ secrets.DEPLOYER_KEY_VAULT }}
+          secrets: 'sadatamodeled-access-key, data-model-demo-eastus2-deployer'
+      - name: 'Setup Terraform'
+        uses: hashicorp/setup-terraform@v1
+      - name: 'Terraform Init'
+        env: 
+          TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.REMOTE_STATE_KEY}}'"
+          ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sadatamodeled-access-key }}
+        run: terraform init
+      - name: 'Terraform Validate'
+        run: terraform validate
+      - name: 'Terraform Plan'
+        env:        
+          ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.data-model-demo-eastus2-deployer }}
+          ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sadatamodeled-access-key }}
+        run: terraform plan -out="./deployment-plan.tfplan"
+      - name: 'Upload Plan'
+        uses: actions/upload-artifact@v2
+        with:
+          name: deployment-plan
+          path: ./deployment-plan.tfplan
+          retention-days: 1
+      - name: 'Azure CLI logout'
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.0.72
+          inlineScript: |
+            az logout
+            az cache purge
+            az account clear
+  apply:
+    name: 'apply-deployments'
+    needs: plan
+    runs-on: ubuntu-latest
+    env:
+      ARM_TENANT_ID: ${{ secrets.TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
+      ARM_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+    steps:
+      - name: 'Checkout Repo'
+        uses: actions/checkout@v2
+      - name: 'Az CLI Login'
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ secrets.TENANT_ID }}
+          subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.CLIENT_ID }}
+      - name: 'Get Deployer Secret'
+        id: get-deployer-secret
+        uses: azure/get-keyvault-secrets@v1
+        with:
+          keyvault: ${{ secrets.DEPLOYER_KEY_VAULT }}
+          secrets: 'sadatamodeled-access-key, data-model-demo-eastus2-deployer'
+      - name: 'Setup Terraform'
+        uses: hashicorp/setup-terraform@v1
+      - name: 'Terraform Init'
+        env: 
+          TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.REMOTE_STATE_KEY}}'"
+          ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sadatamodeled-access-key }}
+        run: terraform init
+      - name: 'Download Plan'
+        uses: actions/download-artifact@v2
+        with:
+          name: deployment-plan
+      - name: 'Delete Plan from Repo'
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: deployment-plan
+          failOnError: false
+      - name:  'Terraform Apply'
+        env:
+          ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.data-model-demo-eastus2-deployer }}
+          ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sadatamodeled-access-key }}
+        run: terraform apply -auto-approve "./deployment-plan.tfplan"
+      - name: 'Azure CLI logout'
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.0.72
+          inlineScript: |
+            az logout
+            az cache purge
+            az account clear

@@ -112,3 +112,112 @@ The servers and software that handles the events.
 - Fixed Partitions in Event Hub
 - Retention Period is limited to 1 or 7 days in Event Hub
 - PaaS for Event Hub vs. Kafka locally hosted
+
+## Event Hub Sizing
+
+![Namespace Diagram](images/event-hub/namespace-diagram.png)
+
+- Pricing Tier
+  - Basic
+  - Standard, twice as expensive as basic but includes:
+    - Data Capture Storage
+    - Kafka support
+    - Retain events for up to 7 days instead of 1 day (Default is 7)
+  - Dedicated, costs ~> $4k a month
+    - Higher Ingress and Egress
+    - Up to 90 days of event retention
+- Throughput Units
+  - 1 MB Ingress per second
+  - 2 MB Egress per second
+- Zone Redundancy
+
+Namespaces manage cost and access.
+
+### How Many Partitions?
+
+2 to 32, one Partition per Reader.
+
+Default number is 4 Partitions.
+
+## Sending and Recieving Messages
+
+### Requirements
+
+![Send and Received Requirements](images/event-hub/send-recieve-requirements.png)
+
+![Python Send Example](images/event-hub/python-code-example-send.png)
+
+![Java Dependency](images/event-hub/java-dependency.png)
+
+![Java Send Example](images/event-hub/java-send-example.png)
+
+## Azure Monitor
+
+### Types of Metrics
+
+- Connections
+- Requests
+- Errors
+- Messages and bytes
+- Data capture
+
+## Data Capture
+
+Aspects to configure for Data Capture.
+
+- Size Window
+- Time Window
+- Folder Format
+
+Whichever wins first.
+
+- Stored in Avro File Format
+  - Compact binary format
+  - JSON headers to define the shape of the data
+  - Designed for data serialization
+  - Made for Apache Hadoop ecosystem
+  - Also used in Azure Stream Analytics and Azure Data Factory
+
+### Storage Options
+
+- Blob Storage 
+- Data Lake Gen 2 (which is a thin layer on top of Blob storage)
+
+
+#### Blob
+
+Binary Large Object solution for the cloud optimized for storing massive amounts of unstructured data. (Terrabyte and Pedabyte)
+
+- Storage Account
+  - Provides an Endpoint and Namespace
+- Container
+  - A File Folder
+- Blob
+  - File
+
+##### Blob Types
+
+- Block Blobs
+  - Data is stored as blocks
+  - Made for uploading large files
+  - Parallel uploading and MD5 hashes to ensure the integrity of the data
+  - From 4 MB to 100 MBs
+- Append blob
+  - Only append operations for things such as logs
+  - Max size 4 MBs
+- Page Blobs
+  - Made for random read/write access such as the disks in Virtual Machines
+  - 520 bytes
+
+##### Data Redundancy
+
+- Locally Redundant (LRS)
+  - Saved three different places within the same data center
+  - Cheapest and least reliable
+- Zone Redundant (ZRS)
+  - Saved in three seperate data centers (Availability Zones) within the same region (location)
+  - Default recommendation, access data quickly and be sure it is safe
+- Geo Redundant (GRS)
+  - Asynchronously copy your data to a whole different region (location)
+  - Protects against vast natural disasters
+
