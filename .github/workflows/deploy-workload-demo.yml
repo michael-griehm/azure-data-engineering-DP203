@@ -1,4 +1,4 @@
-name: deploy-event-hub
+name: deploy-workload-demo
 on: 
   workflow_dispatch
 env:
