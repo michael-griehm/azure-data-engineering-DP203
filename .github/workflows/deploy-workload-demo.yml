@@ -96,6 +96,7 @@ jobs:
         env: 
           TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.REMOTE_STATE_KEY}}'"
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sadatamodeled-access-key }}
+        working-directory: ./iac
         run: terraform init
       - name: 'Download Plan'
         uses: actions/download-artifact@v2

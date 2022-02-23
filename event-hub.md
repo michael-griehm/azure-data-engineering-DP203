@@ -183,7 +183,6 @@ Whichever wins first.
 - Blob Storage 
 - Data Lake Gen 2 (which is a thin layer on top of Blob storage)
 
-
 #### Blob
 
 Binary Large Object solution for the cloud optimized for storing massive amounts of unstructured data. (Terrabyte and Pedabyte)
@@ -220,4 +219,23 @@ Binary Large Object solution for the cloud optimized for storing massive amounts
 - Geo Redundant (GRS)
   - Asynchronously copy your data to a whole different region (location)
   - Protects against vast natural disasters
+
+#### Data Lake
+
+Azure Data Lake Storage Gen2 is a set of capabilities dedicatdd to big data analytics built on Azure Blob Storage. 
+
+The Data Lake is split up into to parts:
+
+- Storage
+  - Storage capability of files.
+- Analytics
+  - Tool used to run large analytics on large amounts of data using massive parallel processing.
+  - Databricks is a competitor to this feature set and long term support for this is unknown.
+
+##### Benefits
+
+- Built on Blob Storage
+- Hadoop compatible access (being replaced with Apache Spark)
+- Hierarchical namespace (file directory structure)
+- Cheaper, Gen 2 ZRS is 40% cheaper Gen Data Lake Storage
 
