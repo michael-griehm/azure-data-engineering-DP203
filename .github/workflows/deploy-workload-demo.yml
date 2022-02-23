@@ -13,15 +13,13 @@ permissions:
   id-token: write
   contents: read
 
-defaults:
-  run:
-    working-directory: ./iac
-
 jobs:
   plan:
     name: 'plan deployments'
     runs-on: ubuntu-latest
-    
+    defaults:
+      run:
+        working-directory: ./iac
     env:
       ARM_TENANT_ID: ${{ secrets.TENANT_ID }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
@@ -59,7 +57,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: deployment-plan
-          path: ./deployment-plan.tfplan
+          path: ./iac/deployment-plan.tfplan
           retention-days: 1
       - name: 'Azure CLI logout'
         uses: azure/CLI@v1
@@ -103,6 +101,8 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: deployment-plan
+      - name: 'Move Plan'
+        run: mv ./deployment-plan.tfplan ./iac/
       - name: 'Delete Plan from Repo'
         uses: geekyeggo/delete-artifact@v1
         with:
@@ -112,6 +112,7 @@ jobs:
         env:
           ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.data-model-demo-eastus2-deployer }}
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sadatamodeled-access-key }}
+        working-directory: ./iac
         run: terraform apply -auto-approve "./deployment-plan.tfplan"
       - name: 'Azure CLI logout'
         uses: azure/CLI@v1
