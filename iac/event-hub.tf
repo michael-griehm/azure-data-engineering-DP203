@@ -12,7 +12,7 @@ provider "azurerm" {
 }
 
 variable "app_name" {
-  default = "data-model-demo"
+  default = "data-model"
   type      = string
   sensitive = false
 }
