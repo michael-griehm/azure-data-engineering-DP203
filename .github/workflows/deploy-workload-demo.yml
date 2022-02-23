@@ -1,6 +1,8 @@
 name: deploy-workload-demo
 on: 
-  workflow_dispatch
+  push:
+    branches:
+      - "main"
 env:
   REMOTE_STATE_RG: rg-data-model-demo-eastus2
   REMOTE_STATE_SA: sadatamodeled
