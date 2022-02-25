@@ -1,5 +1,17 @@
 # Azure Event Hub
 
+## Data Engineering Pipeline
+
+- Ingest - Event Hubs
+  - Dedicated solution on how to recieve millions of events.
+- Analyze - Stream Analytics
+  - Applying business logic to the data and possibly reaching some conclusion.
+- Deliver - Power BI
+  - Get the results to the end user
+    - Data Scientist
+    - Business Users
+    - Application Users
+
 ## Azure Event/Messaging Solutions
 
 ![Messaging Solutions](images/event-hub/messaging-solutions.png)
@@ -239,3 +251,49 @@ The Data Lake is split up into to parts:
 - Hierarchical namespace (file directory structure)
 - Cheaper, Gen 2 ZRS is 40% cheaper Gen Data Lake Storage
 
+## Streaming Analytics
+
+The analysis of huge pools of current and "in-motion" data thru the use of continous queries called event streams.
+
+### Criteria
+
+- Real-time
+- Urgent and expiring
+- Windows of time
+- Complex Event Processing
+
+### Tools
+
+- Azure Stream Analytics
+  - Can process streams
+- Azure Databricks
+
+#### Azure Stream Analytics (ASA)
+
+SQL-like tool that understands time and window-based analysis.
+
+![ASA Sample Query](images/event-hub/asa-sample-query.png)
+
+- PaaS
+- Scalable
+  - Measured in arbitrary Streaming Units
+  - 1 Streaming Unit ~ 1 Mb/s
+  - Can scale up to 100's of Streaming Units
+- Fast
+  - Can handle millions of events at sub-second latencies
+
+ASA is not a full solution.  A tool for a narrow purpose.
+
+![ASA Portal View](images/event-hub/asa-portal-view.png)
+
+![ASA More Advanced](images/event-hub/asa-more-advanced-query.png)
+
+#### Azure Databricks
+
+Managed, centralized solution for advanced analytics.
+
+It is a layered product:
+
+1. Apache Spark
+   - Engine that powers Azure Databricks
+   - Open source program originally created at UC Berkley and is now maintained by the Apache software foundation
