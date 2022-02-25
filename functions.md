@@ -2,7 +2,19 @@
 
 ## EventHub Binding
 
+Run the following command on the ./functions folder to add the Events Hub Extensions package to the Function so we can use it as a Trigger and an Output binding.
+
     dotnet add package Microsoft.Azure.WebJobs.Extensions.EventHubs --version 5.0
+
+## Reference a compiled assembly.
+
+Put the assembly (.dll) in a folder under the root of the ./functions folder then reference it in the functions project file (.csproj) as shown below:
+
+    <ItemGroup>
+        <Reference Include="CoinAPI.REST.V1">
+            <HintPath>./assemblies/CoinAPI.REST.V1.dll</HintPath>
+        </Reference>
+    </ItemGroup>
 
 ## Demo Use Case
 

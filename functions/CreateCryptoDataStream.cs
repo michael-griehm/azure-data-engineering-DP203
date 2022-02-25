@@ -15,7 +15,7 @@ namespace DataModel.Demo
                                      [EventHub("dest", Connection = "EventHubConnectionAppSetting")]IAsyncCollector<string> outputEvents,
                                      ILogger log)
         {
-            log.LogInformation($"C# Timer trigger function CreateCryptoDataStream executed at: {DateTime.Now}");
+            log.LogInformation($"C# Timer trigger function CreateCryptoDataStream began executing at: {DateTime.Now}");
 
             var coinApiKey = System.Environment.GetEnvironmentVariable("CoinApiKey", EnvironmentVariableTarget.Process);
 
@@ -24,11 +24,13 @@ namespace DataModel.Demo
                 Log = s => log.LogInformation(s)
             };
 
-            log.LogDebug("Calling the CoinAPI List Asset method.");
+            log.LogInformation("Calling the CoinAPI List Asset method");
 
             var assets = await coinApiEndpointTester.Metadata_list_assetsAsync();
 
             log.LogInformation($"The number of Assets returned: {assets.Data.Count} ");
+
+            int i = 0;
 
             foreach (var asset in assets.Data.Where(x=> x.type_is_crypto))
             {
@@ -36,8 +38,14 @@ namespace DataModel.Demo
 
                 string json = JsonConvert.SerializeObject(streamEvent);
 
-                log.LogInformation(json);
+                await outputEvents.AddAsync(json);
+
+                i++;
             }
+
+            log.LogInformation($"The number of Assets streamed: {assets.Data.Count} ");
+
+            log.LogInformation($"C# Timer trigger function CreateCryptoDataStream finished executing at: {DateTime.Now}");
         }
     }
 
