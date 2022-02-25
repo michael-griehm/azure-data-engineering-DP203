@@ -31,7 +31,7 @@ locals {
   loc            = lower(replace(var.location, " ", ""))
   a_name         = replace(var.app_name, "-", "")
   fqrn           = "${var.app_name}-${var.env}-${local.loc}"
-  fqrn_no_dashes = "${var.a_name}-${var.env}-${local.loc}"
+  fqrn_no_dashes = "${local.a_name}-${var.env}-${local.loc}"
   rg_name        = "rg-${local.fqrn}"
 }
 
