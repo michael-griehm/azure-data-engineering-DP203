@@ -1,5 +1,5 @@
 resource "azurerm_storage_account" "example" {
-  name                     = "sa${local.fqrn_no_dashes}"
+  name                     = "safn${length(local.a_name) > 18 ? substr(local.a_name, 0, 18) : local.a_name}${substr(local.loc, 0, 1)}${substr(var.env, 0, 1)}"
   resource_group_name      = data.azurerm_resource_group.rg.name
   location                 = data.azurerm_resource_group.rg.location
   account_tier             = "Standard"
