@@ -17,8 +17,8 @@ resource "azurerm_eventhub" "eh" {
 resource "azurerm_eventhub_authorization_rule" "sap" {
   name                = "sap-function-stream"
   namespace_name      = azurerm_eventhub_namespace.ehns.name
-  eventhub_name       = azurerm_eventhub.ehns.name
-  resource_group_name = azurerm_resource_group.ehns.name
+  eventhub_name       = azurerm_eventhub.eh.name
+  resource_group_name = data.azurerm_resource_group.rg.name
   listen              = false
   send                = true
   manage              = false
