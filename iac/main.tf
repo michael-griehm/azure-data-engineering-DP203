@@ -12,7 +12,7 @@ provider "azurerm" {
 }
 
 variable "app_name" {
-  default = "data-model"
+  default   = "data-model"
   type      = string
   sensitive = false
 }
@@ -28,15 +28,15 @@ variable "location" {
 }
 
 locals {
-  loc     = lower(replace(var.location, " ", ""))
-  a_name  = replace(var.app_name, "-", "")
-  fqrn    = "${var.app_name}-${var.env}-${local.loc}"
+  loc            = lower(replace(var.location, " ", ""))
+  a_name         = replace(var.app_name, "-", "")
+  fqrn           = "${var.app_name}-${var.env}-${local.loc}"
   fqrn_no_dashes = "${var.a_name}-${var.env}-${local.loc}"
-  rg_name = "rg-${local.fqrn}"
+  rg_name        = "rg-${local.fqrn}"
 }
 
 data "azurerm_client_config" "current" {}
 
 data "azurerm_resource_group" "rg" {
-  name     = local.rg_name
+  name = local.rg_name
 }
