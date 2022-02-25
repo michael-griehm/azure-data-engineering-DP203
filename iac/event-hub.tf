@@ -14,11 +14,11 @@ resource "azurerm_eventhub" "eh" {
   message_retention   = 1
 }
 
-resource "azurerm_eventhub_authorization_rule" "example" {
-  name                = "sas-function-stream"
-  namespace_name      = azurerm_eventhub_namespace.example.name
-  eventhub_name       = azurerm_eventhub.example.name
-  resource_group_name = azurerm_resource_group.example.name
+resource "azurerm_eventhub_authorization_rule" "sap" {
+  name                = "sap-function-stream"
+  namespace_name      = azurerm_eventhub_namespace.ehns.name
+  eventhub_name       = azurerm_eventhub.ehns.name
+  resource_group_name = azurerm_resource_group.ehns.name
   listen              = false
   send                = true
   manage              = false
