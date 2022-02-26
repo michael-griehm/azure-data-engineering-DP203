@@ -27,7 +27,7 @@ variable "location" {
   sensitive = false
 }
 
-variable "coin_api_key_ap_setting" {
+variable "coin_api_key_app_setting" {
   type      = string
   sensitive = true
 }

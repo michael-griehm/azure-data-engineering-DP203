@@ -38,7 +38,7 @@ resource "azurerm_function_app" "fn" {
   version                    = "~3"
 
   app_settings = {
-    "CoinApiKeyAppSetting"         = "${var.coin_api_key_ap_setting}"
+    "CoinApiKeyAppSetting"         = "${var.coin_api_key_app_setting}"
     "EventHubConnectionAppSetting" = "${var.event_hub_connection_app_setting}"
   }
 
