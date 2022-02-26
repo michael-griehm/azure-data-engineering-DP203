@@ -17,7 +17,7 @@ namespace DataModel.Demo
         {
             log.LogInformation($"C# Timer trigger function CreateCryptoDataStream began executing at: {DateTime.Now}");
 
-            var coinApiKey = System.Environment.GetEnvironmentVariable("CoinApiKey", EnvironmentVariableTarget.Process);
+            var coinApiKey = System.Environment.GetEnvironmentVariable("CoinApiKeyAppSetting", EnvironmentVariableTarget.Process);
 
             var coinApiEndpointTester = new CoinApiRestEndpointsTester(coinApiKey)
             {

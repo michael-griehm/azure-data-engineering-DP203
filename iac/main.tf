@@ -27,6 +27,16 @@ variable "location" {
   sensitive = false
 }
 
+variable "coin_api_key_ap_setting" {
+  type      = string
+  sensitive = true
+}
+
+variable "event_hub_connection_app_setting" {
+  type      = string
+  sensitive = true
+}
+
 locals {
   loc            = lower(replace(var.location, " ", ""))
   a_name         = replace(var.app_name, "-", "")
