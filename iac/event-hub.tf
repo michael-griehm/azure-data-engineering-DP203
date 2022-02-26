@@ -4,6 +4,15 @@ resource "azurerm_eventhub_namespace" "ehns" {
   resource_group_name = data.azurerm_resource_group.rg.name
   sku                 = "Standard"
   capacity            = 1
+  zone_redundant      = true
+  network_rulesets {
+    default_action                 = "Deny"
+    trusted_service_access_enabled = true
+    ip_rule {
+      ip_mask = "24.31.171.98"
+      action  = "Allow"
+    }
+  }
 }
 
 resource "azurerm_eventhub" "eh" {

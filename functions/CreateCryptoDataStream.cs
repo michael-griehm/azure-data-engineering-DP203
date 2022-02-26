@@ -51,9 +51,9 @@ namespace DataModel.Demo
 
     public struct CrytoAssetStreamEvent
     {
-        string Symbol { get; set;}
-        decimal? Price { get; set;}
-        DateTime PriceTimeStamp {get => DateTime.Now;}
+        string Symbol { get; set; }
+        decimal? Price { get; set; }
+        DateTime PriceTimeStamp { get => DateTime.Now; }
 
         public CrytoAssetStreamEvent(Asset asset)
         {
