@@ -3,8 +3,8 @@ terraform {
     azuread = "~>2.16.0"
   }
 
-  # backend "azurerm" {
-  # }
+  backend "azurerm" {
+  }
 }
 
 provider "azurerm" {

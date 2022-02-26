@@ -1,4 +1,4 @@
-resource "azurerm_storage_account" "example" {
+resource "azurerm_storage_account" "fn_sa" {
   name                     = "fn${length(local.a_name) > 20 ? substr(local.a_name, 0, 20) : local.a_name}${substr(local.loc, 0, 1)}${substr(var.env, 0, 1)}"
   resource_group_name      = data.azurerm_resource_group.rg.name
   location                 = data.azurerm_resource_group.rg.location
