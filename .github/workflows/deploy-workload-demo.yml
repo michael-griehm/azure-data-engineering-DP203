@@ -5,10 +5,6 @@ on:
       - "main"
   workflow_dispatch:
 
-defaults:
-  run:
-    shell: bash
-
 env:
   REMOTE_STATE_RG: rg-data-model-demo-eastus2
   REMOTE_STATE_SA: sadatamodeled
