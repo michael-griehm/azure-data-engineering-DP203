@@ -69,7 +69,6 @@ jobs:
       - name: 'Azure CLI logout'
         uses: azure/CLI@v1
         with:
-          azcliversion: 2.0.72
           inlineScript: |
             az logout
             az cache purge
@@ -125,7 +124,6 @@ jobs:
       - name: 'Azure CLI logout'
         uses: azure/CLI@v1
         with:
-          azcliversion: 2.0.72
           inlineScript: |
             az logout
             az cache purge
@@ -145,7 +143,7 @@ jobs:
         with:
           dotnet-version: '3.1.x'
       - name: 'Build Function App'
-        run: dotnet build --Configuration Release --output ./output
+        run: dotnet build --configuration Release --output ./output
       - name: 'Az CLI Login'
         uses: azure/login@v1
         with:
@@ -157,3 +155,10 @@ jobs:
         with:
           app-name: 'fn-quote-stream-producers'
           package: './functions/output'
+      - name: 'Azure CLI logout'
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az logout
+            az cache purge
+            az account clear
