@@ -95,13 +95,11 @@ resource "azurerm_function_app" "fn" {
   ]
 }
 
-
-
 resource "azurerm_key_vault_access_policy" "fn_acl" {
   key_vault_id = azurerm_key_vault.vault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = azurerm_function_app.fn.identity[0].principal_id
-  
+
   secret_permissions = [
     "Get",
   ]
@@ -110,4 +108,36 @@ resource "azurerm_key_vault_access_policy" "fn_acl" {
     azurerm_key_vault.vault,
     azurerm_function_app.fn
   ]
+}
+
+resource "azurerm_log_analytics_workspace" "logs" {
+  name                = "fnquotestreamproducers"
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+  sku                 = "Free"
+  retention_in_days   = 7
+}
+
+resource "azurerm_monitor_diagnostic_setting" "logs" {
+  name                       = "fnquotestreamproducers"
+  target_resource_id         = azurerm_function_app.fn.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id
+
+  log {
+    category = "AuditEvent"
+
+    retention_policy {
+      enabled = true
+      days    = 7
+    }
+  }
+
+  metric {
+    category = "AllMetrics"
+
+    retention_policy {
+      enabled = true
+      days    = 7
+    }
+  }
 }
