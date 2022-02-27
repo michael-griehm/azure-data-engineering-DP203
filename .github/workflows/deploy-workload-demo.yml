@@ -5,6 +5,10 @@ on:
       - "main"
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: bash
+
 env:
   REMOTE_STATE_RG: rg-data-model-demo-eastus2
   REMOTE_STATE_SA: sadatamodeled
@@ -126,3 +130,30 @@ jobs:
             az logout
             az cache purge
             az account clear
+  build-and-deploy:
+    name: 'build-and-deploy-function-app'
+    needs: apply
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./functions
+    steps:
+      - name: 'Checkout Repo'
+        uses: actions/checkout@v2
+      - name: 'Setup .NET Environment' 
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.x'
+      - name: 'Build Function App'
+        run: dotnet build --Configuration Release --output ./output
+      - name: 'Az CLI Login'
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ secrets.TENANT_ID }}
+          subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.CLIENT_ID }}
+      - name: 'Deploy Function App'
+        uses: azure/functions-action@v1
+        with:
+          app-name: 'fn-quote-stream-producers'
+          package: './functions/output'
