@@ -6,8 +6,8 @@ resource "azurerm_storage_account" "fn_sa" {
   account_replication_type = "GRS"
 
   network_rules {
-    default_action = "Allow"
-    # ip_rules                   = ["74.83.138.51", "24.31.171.98"]
+    default_action             = "Allow"
+    ip_rules                   = []
     virtual_network_subnet_ids = []
   }
 }
@@ -27,6 +27,48 @@ resource "azurerm_app_service_plan" "asp" {
   ]
 }
 
+resource "azurerm_key_vault" "vault" {
+  resource_group_name         = data.azurerm_resource_group.rg.name
+  location                    = data.azurerm_resource_group.rg.location
+  tenant_id                   = data.azurerm_client_config.current.tenant_id
+  name                        = "fnquotestreamproducers"
+  enabled_for_disk_encryption = true
+  soft_delete_retention_days  = 7
+  purge_protection_enabled    = false
+  sku_name                    = "standard"
+}
+
+resource "azurerm_key_vault_access_policy" "current_deployer_acl" {
+  key_vault_id = azurerm_key_vault.vault.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = data.azurerm_client_config.current.object_id
+
+  secret_permissions = [
+    "Backup",
+    "Delete",
+    "Get",
+    "List",
+    "Purge",
+    "Recover",
+    "Restore",
+    "Set"
+  ]
+
+  depends_on = [
+    azurerm_key_vault.vault
+  ]
+}
+
+resource "azurerm_key_vault_secret" "event_hub_connection" {
+  name         = azurerm_eventhub_authorization_rule.sap.name
+  value        = azurerm_eventhub_authorization_rule.sap.primary_connection_string
+  key_vault_id = azurerm_key_vault.vault.id
+
+  depends_on = [
+    azurerm_key_vault_access_policy.current_deployer_acl
+  ]
+}
+
 resource "azurerm_function_app" "fn" {
   name                       = "fn-quote-stream-producers"
   resource_group_name        = data.azurerm_resource_group.rg.name
@@ -39,7 +81,7 @@ resource "azurerm_function_app" "fn" {
 
   app_settings = {
     "CoinApiKeyAppSetting"         = "${var.coin_api_key_app_setting}"
-    "EventHubConnectionAppSetting" = "${var.event_hub_connection_app_setting}"
+    "EventHubConnectionAppSetting" = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.event_hub_connection.versionless_id})"
   }
 
   identity {
@@ -48,6 +90,24 @@ resource "azurerm_function_app" "fn" {
 
   depends_on = [
     azurerm_storage_account.fn_sa,
-    azurerm_app_service_plan.asp
+    azurerm_app_service_plan.asp,
+    azurerm_key_vault_secret.event_hub_connection
+  ]
+}
+
+
+
+resource "azurerm_key_vault_access_policy" "fn_acl" {
+  key_vault_id = azurerm_key_vault.vault.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = azurerm_function_app.fn.identity[0].principal_id
+  
+  secret_permissions = [
+    "Get",
+  ]
+
+  depends_on = [
+    azurerm_key_vault.vault,
+    azurerm_function_app.fn
   ]
 }
