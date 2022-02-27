@@ -6,12 +6,8 @@ resource "azurerm_eventhub_namespace" "ehns" {
   capacity            = 1
   zone_redundant      = true
   network_rulesets {
-    default_action                 = "Deny"
+    default_action                 = "Allow"
     trusted_service_access_enabled = true
-    ip_rule {
-      ip_mask = "24.31.171.98"
-      action  = "Allow"
-    }
   }
 }
 
