@@ -124,7 +124,7 @@ resource "azurerm_monitor_diagnostic_setting" "logs" {
   log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id
 
   log {
-    category = "AuditEvent"
+    category = "FunctionAppLogs"
 
     retention_policy {
       enabled = true
