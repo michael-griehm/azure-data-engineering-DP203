@@ -38,6 +38,8 @@ namespace DataModel.Demo
 
                 string json = JsonConvert.SerializeObject(streamEvent);
 
+                log.LogInformation($"Sending event: {json}");
+
                 await outputEvents.AddAsync(json);
 
                 i++;
@@ -49,11 +51,11 @@ namespace DataModel.Demo
         }
     }
 
-    public struct CrytoAssetStreamEvent
+    public class CrytoAssetStreamEvent
     {
-        string Symbol { get; set; }
-        decimal? Price { get; set; }
-        DateTime PriceTimeStamp { get => DateTime.Now; }
+        public string Symbol { get; set; }
+        public decimal? Price { get; set; }
+        public DateTime PriceTimeStamp { get => DateTime.Now; }
 
         public CrytoAssetStreamEvent(Asset asset)
         {

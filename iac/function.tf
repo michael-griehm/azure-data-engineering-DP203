@@ -18,8 +18,8 @@ resource "azurerm_app_service_plan" "asp" {
   location            = data.azurerm_resource_group.rg.location
 
   sku {
-    tier = "Standard"
-    size = "S1"
+    tier = "Dynamic"
+    size = "D1"
   }
 
   depends_on = [
@@ -66,8 +66,8 @@ resource "azurerm_key_vault_access_policy" "current_deployer_acl" {
 }
 
 resource "azurerm_key_vault_secret" "event_hub_connection" {
-  name         = azurerm_eventhub_authorization_rule.sap.name
-  value        = azurerm_eventhub_authorization_rule.sap.primary_connection_string
+  name         = azurerm_eventhub_authorization_rule.producer.name
+  value        = azurerm_eventhub_authorization_rule.producer.primary_connection_string
   key_vault_id = azurerm_key_vault.vault.id
 
   depends_on = [
