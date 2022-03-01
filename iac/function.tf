@@ -33,7 +33,7 @@ resource "azurerm_key_vault" "vault" {
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   name                        = "fnquotestreamproducers"
   enabled_for_disk_encryption = true
-  soft_delete_retention_days  = 1
+  soft_delete_retention_days  = 7
   purge_protection_enabled    = false
   sku_name                    = "standard"
 }
