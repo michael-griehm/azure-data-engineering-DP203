@@ -11,7 +11,7 @@ namespace DataModel.Demo
     public static class CreateCryptoDataStream
     {
         [FunctionName("CreateCryptoDataStream")]
-        public static async Task Run([TimerTrigger("0 */1 * * * *")] TimerInfo myTimer,
+        public static async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo myTimer,
                                      [EventHub("dest", Connection = "EventHubConnectionAppSetting")]IAsyncCollector<string> outputEvents,
                                      ILogger log)
         {

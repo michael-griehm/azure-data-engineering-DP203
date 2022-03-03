@@ -5,6 +5,8 @@ resource "azurerm_eventhub_namespace" "ehns" {
   sku                 = "Standard"
   capacity            = 1
   zone_redundant      = true
+  tags                = var.tags
+
   network_rulesets {
     default_action                 = "Allow"
     trusted_service_access_enabled = true

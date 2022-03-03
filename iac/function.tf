@@ -4,6 +4,7 @@ resource "azurerm_storage_account" "fn_sa" {
   location                 = data.azurerm_resource_group.rg.location
   account_tier             = "Standard"
   account_replication_type = "GRS"
+  tags                     = var.tags
 
   network_rules {
     default_action             = "Allow"
@@ -16,6 +17,7 @@ resource "azurerm_app_service_plan" "asp" {
   name                = "asp-quote-stream-producers"
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
+  tags                = var.tags
 
   sku {
     tier = "Dynamic"
@@ -27,7 +29,7 @@ resource "azurerm_app_service_plan" "asp" {
   ]
 }
 
-resource "azurerm_key_vault" "vault" {
+resource "azurerm_key_vault" "fn_vault" {
   resource_group_name         = data.azurerm_resource_group.rg.name
   location                    = data.azurerm_resource_group.rg.location
   tenant_id                   = data.azurerm_client_config.current.tenant_id
@@ -36,10 +38,11 @@ resource "azurerm_key_vault" "vault" {
   soft_delete_retention_days  = 7
   purge_protection_enabled    = false
   sku_name                    = "standard"
+  tags                        = var.tags
 }
 
-resource "azurerm_key_vault_access_policy" "current_deployer_acl" {
-  key_vault_id = azurerm_key_vault.vault.id
+resource "azurerm_key_vault_access_policy" "fn_vault_deployer_acl" {
+  key_vault_id = azurerm_key_vault.fn_vault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = data.azurerm_client_config.current.object_id
 
@@ -53,26 +56,12 @@ resource "azurerm_key_vault_access_policy" "current_deployer_acl" {
     "Restore",
     "Set"
   ]
-
-  certificate_permissions = [ "Purge" ]
-
-  key_permissions = [ "Purge" ]
-
-  storage_permissions = [ "Purge" ]
-
-  depends_on = [
-    azurerm_key_vault.vault
-  ]
 }
 
 resource "azurerm_key_vault_secret" "event_hub_connection" {
   name         = azurerm_eventhub_authorization_rule.producer.name
   value        = azurerm_eventhub_authorization_rule.producer.primary_connection_string
-  key_vault_id = azurerm_key_vault.vault.id
-
-  depends_on = [
-    azurerm_key_vault_access_policy.current_deployer_acl
-  ]
+  key_vault_id = azurerm_key_vault.fn_vault.id
 }
 
 resource "azurerm_function_app" "fn" {
@@ -84,6 +73,7 @@ resource "azurerm_function_app" "fn" {
   storage_account_access_key = azurerm_storage_account.fn_sa.primary_access_key
   https_only                 = true
   version                    = "~3"
+  tags                       = var.tags
 
   app_settings = {
     "CoinApiKeyAppSetting"         = "${var.coin_api_key_app_setting}"
@@ -102,7 +92,7 @@ resource "azurerm_function_app" "fn" {
 }
 
 resource "azurerm_key_vault_access_policy" "fn_acl" {
-  key_vault_id = azurerm_key_vault.vault.id
+  key_vault_id = azurerm_key_vault.fn_vault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = azurerm_function_app.fn.identity[0].principal_id
 
@@ -111,7 +101,6 @@ resource "azurerm_key_vault_access_policy" "fn_acl" {
   ]
 
   depends_on = [
-    azurerm_key_vault.vault,
     azurerm_function_app.fn
   ]
 }
@@ -122,6 +111,7 @@ resource "azurerm_log_analytics_workspace" "logs" {
   location            = data.azurerm_resource_group.rg.location
   sku                 = "Free"
   retention_in_days   = 7
+  tags                = var.tags
 }
 
 resource "azurerm_monitor_diagnostic_setting" "logs" {

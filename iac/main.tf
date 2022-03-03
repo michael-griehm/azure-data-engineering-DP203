@@ -22,13 +22,21 @@ variable "app_name" {
 }
 
 variable "env" {
-  default   = "demo"
+  default   = "d"
   sensitive = false
 }
 
 variable "location" {
   default   = "East US 2"
   sensitive = false
+}
+
+variable "tags" {
+  type = map(string)
+
+  default = {
+    environment = "Demo"
+  }
 }
 
 variable "coin_api_key_app_setting" {
