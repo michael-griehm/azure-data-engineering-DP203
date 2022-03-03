@@ -22,7 +22,7 @@ variable "app_name" {
 }
 
 variable "env" {
-  default   = "d"
+  default   = "demo"
   sensitive = false
 }
 
