@@ -95,7 +95,7 @@ resource "azurerm_sql_database" "db" {
 
 resource "azurerm_sql_active_directory_administrator" "aad" {
   server_name         = azurerm_sql_server.sql.name
-  resource_group_name = azurerm_resource_group.sql.name
+  resource_group_name = data.azurerm_resource_group.rg.name
   login               = "sql-aad-admin"
   tenant_id           = data.azurerm_client_config.current.tenant_id
   object_id           = data.azuread_user.sql_admin_user_account.object_id
