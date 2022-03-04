@@ -25,7 +25,7 @@ resource "azurerm_key_vault" "sql_vault" {
   resource_group_name         = data.azurerm_resource_group.rg.name
   location                    = data.azurerm_resource_group.rg.location
   tenant_id                   = data.azurerm_client_config.current.tenant_id
-  name                        = "sqluseralertsettings"
+  name                        = "sql-alert-meta"
   enabled_for_disk_encryption = true
   soft_delete_retention_days  = 7
   purge_protection_enabled    = false
@@ -54,10 +54,6 @@ resource "azurerm_key_vault_secret" "stored_secret" {
   name         = var.sql_admin_login
   value        = random_password.password.result
   key_vault_id = azurerm_key_vault.fn_vault.id
-
-  depends_on = [
-    azurerm_key_vault_access_policy.sql_vault_deployer_acl
-  ]
 }
 
 resource "azurerm_key_vault_access_policy" "admin_acl" {
@@ -72,7 +68,7 @@ resource "azurerm_key_vault_access_policy" "admin_acl" {
 }
 
 resource "azurerm_sql_server" "sql" {
-  name                         = "sql-metadata"
+  name                         = "sql-alert-meta"
   resource_group_name          = data.azurerm_resource_group.rg.name
   location                     = data.azurerm_resource_group.rg.location
   version                      = "12.0"
