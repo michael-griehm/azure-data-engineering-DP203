@@ -5,7 +5,13 @@ variable "sql_admin_principal_name" {
   default     = "mikeg@ish-star.com"
 }
 
-data "azuread_user" "sql_admin" {
+variable "sql_admin_login" {
+  type        = string
+  sensitive   = true
+  description = "The username of the system admin for the SQL Server."
+}
+
+data "azuread_user" "sql_admin_user_account" {
   user_principal_name = var.sql_admin_principal_name
 }
 
@@ -44,10 +50,20 @@ resource "azurerm_key_vault_access_policy" "sql_vault_deployer_acl" {
   ]
 }
 
+resource "azurerm_key_vault_secret" "stored_secret" {
+  name         = var.sql_admin_login
+  value        = random_password.password.result
+  key_vault_id = azurerm_key_vault.fn_vault.id
+
+  depends_on = [
+    azurerm_key_vault_access_policy.sql_vault_deployer_acl
+  ]
+}
+
 resource "azurerm_key_vault_access_policy" "admin_acl" {
   key_vault_id = azurerm_key_vault.sql_vault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = data.azuread_user.sql_admin.object_id
+  object_id    = data.azuread_user.sql_admin_user_account.object_id
 
   secret_permissions = [
     "Get",
@@ -60,7 +76,7 @@ resource "azurerm_sql_server" "sql" {
   resource_group_name          = data.azurerm_resource_group.rg.name
   location                     = data.azurerm_resource_group.rg.location
   version                      = "12.0"
-  administrator_login          = "sa"
+  administrator_login          = var.sql_admin_login
   administrator_login_password = random_password.password.result
   tags                         = var.tags
 
@@ -69,7 +85,7 @@ resource "azurerm_sql_server" "sql" {
   }
 }
 
-resource "azurerm_sql_database" "example" {
+resource "azurerm_sql_database" "db" {
   name                = "db-alerts"
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
