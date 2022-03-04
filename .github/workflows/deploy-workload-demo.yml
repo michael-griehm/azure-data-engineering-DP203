@@ -55,6 +55,7 @@ jobs:
           ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.data-model-demo-eastus2-deployer }}
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sadatamodeled-access-key }}
           TF_VAR_coin_api_key_app_setting: ${{ secrets.COIN_API_KEY_APP_SETTING }}
+          TF_VAR_sql_admin_login: ${{ secrets.SQL_SERVER_ADMIN }}
         run: terraform plan -out="./deployment-plan.tfplan"
       - name: 'Upload Plan'
         uses: actions/upload-artifact@v2
