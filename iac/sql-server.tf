@@ -54,6 +54,10 @@ resource "azurerm_key_vault_secret" "stored_secret" {
   name         = var.sql_admin_login
   value        = random_password.password.result
   key_vault_id = azurerm_key_vault.fn_vault.id
+
+  depends_on = [
+    azurerm_key_vault_access_policy.sql_vault_deployer_acl
+  ]
 }
 
 resource "azurerm_key_vault_access_policy" "admin_acl" {

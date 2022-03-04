@@ -62,6 +62,10 @@ resource "azurerm_key_vault_secret" "event_hub_connection" {
   name         = azurerm_eventhub_authorization_rule.producer.name
   value        = azurerm_eventhub_authorization_rule.producer.primary_connection_string
   key_vault_id = azurerm_key_vault.fn_vault.id
+
+  depends_on = [
+    azurerm_key_vault_access_policy.fn_vault_deployer_acl
+  ]
 }
 
 resource "azurerm_function_app" "fn" {
