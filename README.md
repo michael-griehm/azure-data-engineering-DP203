@@ -19,7 +19,6 @@ A repo with notes and examples of the resources encapsulated in the Azure Data E
 In theoretical computer science, the CAP theorem, also named Brewer's theorem after computer scientist Eric Brewer, states that any distributed data store can only provide two of the following three guarantees:
 
 - Consistency
-  - Every node contains the same data at the same time.
   - Every read receives the most recent write or an error.
 - Availibility
   - Every request receives a (non-error) response, without the guarantee that it contains the most recent write.
