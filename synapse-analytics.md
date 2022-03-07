@@ -1,5 +1,12 @@
 # Cloud Data Warehousing in Azure Synapse Analytics Overview
 
+- Ingest
+- Prepare
+- Manage
+- Serve
+
+![Workload Architecture](images/synapse-analytics/workload-artchitecture.png)
+
 Azure Synapse Analytics combines the following Azure Resources together to provide enterprise grade data modeling and analytics solutions for big data:
 
 - Azure Data Lake Storage
@@ -20,7 +27,7 @@ Benefits:
 - Data Security
 - Enterprise Data Warehousing
 
-## Azure SQL Data Warehouse
+## Azure SQL Data Warehouse (Azure Synapse Pool)
 
 Enterprise Data Warehouse (EDW) that uses Massively Parallel Processing (MPP) to run complex queries across patabytes of data quickly.
 
@@ -84,3 +91,4 @@ MPP Engine is split up into 60 different nodes for processing.
 #### Sizing Partitions
 
 ![Sizing Partitions](.\images\synapse-analytics\sizing-partitions.png)
+

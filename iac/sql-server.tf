@@ -85,6 +85,14 @@ resource "azurerm_sql_server" "sql" {
   }
 }
 
+resource "azurerm_sql_firewall_rule" "example" {
+  name                = "HomeIP"
+  resource_group_name = data.azurerm_resource_group.rg.name
+  server_name         = azurerm_sql_server.sql.name
+  start_ip_address    = "24.31.171.98"
+  end_ip_address      = "24.31.171.98"
+}
+
 resource "azurerm_sql_database" "db" {
   name                = "db-alerts"
   resource_group_name = data.azurerm_resource_group.rg.name
