@@ -1,6 +1,8 @@
 name: destroy-workload-demo
-on: 
-  workflow_dispatch
+on:
+  schedule:
+    - cron: "0 1 * * *"
+  workflow_dispatch:
 
 env:
   REMOTE_STATE_RG: rg-data-model-demo-eastus2
