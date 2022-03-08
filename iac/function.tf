@@ -1,3 +1,14 @@
+variable "fn_admin_principal_name" {
+  type        = string
+  sensitive   = true
+  description = "The user principal name of the admin for the app."
+  default     = "mikeg@ish-star.com"
+}
+
+data "azuread_user" "fn_admin_user_account" {
+  user_principal_name = var.fn_admin_principal_name
+}
+
 resource "azurerm_storage_account" "fn_sa" {
   name                     = "fnstreamproducers"
   resource_group_name      = data.azurerm_resource_group.rg.name
@@ -65,6 +76,23 @@ resource "azurerm_key_vault_secret" "event_hub_connection" {
 
   depends_on = [
     azurerm_key_vault_access_policy.fn_vault_deployer_acl
+  ]
+}
+
+resource "azurerm_key_vault_access_policy" "admin_acl" {
+  key_vault_id = azurerm_key_vault.fn_vault.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = data.azuread_user.fn_admin_user_account.object_id
+
+  secret_permissions = [
+    "Backup",
+    "Delete",
+    "Get",
+    "List",
+    "Purge",
+    "Recover",
+    "Restore",
+    "Set"
   ]
 }
 

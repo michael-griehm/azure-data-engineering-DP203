@@ -66,8 +66,14 @@ resource "azurerm_key_vault_access_policy" "admin_acl" {
   object_id    = data.azuread_user.sql_admin_user_account.object_id
 
   secret_permissions = [
+    "Backup",
+    "Delete",
     "Get",
-    "List"
+    "List",
+    "Purge",
+    "Recover",
+    "Restore",
+    "Set"
   ]
 }
 
