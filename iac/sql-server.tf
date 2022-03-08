@@ -60,7 +60,7 @@ resource "azurerm_key_vault_secret" "stored_secret" {
   ]
 }
 
-resource "azurerm_key_vault_access_policy" "admin_acl" {
+resource "azurerm_key_vault_access_policy" "sql_admin_acl" {
   key_vault_id = azurerm_key_vault.sql_vault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = data.azuread_user.sql_admin_user_account.object_id
