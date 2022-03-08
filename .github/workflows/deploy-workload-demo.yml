@@ -13,23 +13,127 @@ env:
   REMOTE_STATE_RG: rg-data-model-demo-eastus2
   REMOTE_STATE_SA: sadatamodeled
   REMOTE_STATE_CONTAINER: data-model-remote-state-eastus2-demo
-  REMOTE_STATE_KEY: data-model.terraform.tfstate
+  ARM_TENANT_ID: ${{ secrets.TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
+  ARM_CLIENT_ID: ${{ secrets.CLIENT_ID }}
 
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  plan:
-    name: 'plan deployments'
+  plan-key-vaults:
+    name: 'plan key vault infrastructure'
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./iac
+        working-directory: ./iac/key-vaults
     env:
-      ARM_TENANT_ID: ${{ secrets.TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
-      ARM_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      REMOTE_STATE_KEY: key-vaults.terraform.tfstate
+    steps:
+      - name: 'Checkout Repo'
+        uses: actions/checkout@v2
+      - name: 'Azure Login'
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ secrets.TENANT_ID }}
+          subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.CLIENT_ID }}
+      - name: 'Get Deployer Secret'
+        id: get-deployer-secret
+        uses: azure/get-keyvault-secrets@v1
+        with:
+          keyvault: ${{ secrets.DEPLOYER_KEY_VAULT }}
+          secrets: 'sadatamodeled-access-key, data-model-demo-eastus2-deployer'
+      - name: 'Setup Terraform'
+        uses: hashicorp/setup-terraform@v1
+      - name: 'Terraform Init'
+        env: 
+          TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.REMOTE_STATE_KEY}}'"
+          ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sadatamodeled-access-key }}
+        run: terraform init
+      - name: 'Terraform Validate'
+        run: terraform validate
+      - name: 'Terraform Plan'
+        env:        
+          ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.data-model-demo-eastus2-deployer }}
+          ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sadatamodeled-access-key }}
+        run: terraform plan -out="./deployment-plan.tfplan"
+      - name: 'Upload Plan'
+        uses: actions/upload-artifact@v2
+        with:
+          name: key-vaults-plan
+          path: ./iac/key-vaults/key-vaults-plan.tfplan
+          retention-days: 1
+      - name: 'Azure CLI logout'
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az logout
+            az cache purge
+            az account clear
+  apply-key-vaults:
+    name: 'apply key vault infrastructure'
+    needs: plan-key-vaults
+    runs-on: ubuntu-latest
+    env:
+      REMOTE_STATE_KEY: key-vaults.terraform.tfstate
+    steps:
+      - name: 'Checkout Repo'
+        uses: actions/checkout@v2
+      - name: 'Azure Login'
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ secrets.TENANT_ID }}
+          subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.CLIENT_ID }}
+      - name: 'Get Deployer Secret'
+        id: get-deployer-secret
+        uses: azure/get-keyvault-secrets@v1
+        with:
+          keyvault: ${{ secrets.DEPLOYER_KEY_VAULT }}
+          secrets: 'sadatamodeled-access-key, data-model-demo-eastus2-deployer'
+      - name: 'Setup Terraform'
+        uses: hashicorp/setup-terraform@v1
+      - name: 'Terraform Init'
+        env: 
+          TF_CLI_ARGS_init: "-backend-config='resource_group_name=${{env.REMOTE_STATE_RG}}' -backend-config='storage_account_name=${{env.REMOTE_STATE_SA}}' -backend-config='container_name=${{env.REMOTE_STATE_CONTAINER}}' -backend-config='key=${{env.REMOTE_STATE_KEY}}'"
+          ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sadatamodeled-access-key }}
+        working-directory: ./iac/key-vaults
+        run: terraform init
+      - name: 'Download Plan'
+        uses: actions/download-artifact@v2
+        with:
+          name: key-vaults-plan
+      - name: 'Move Plan'
+        run: mv ./key-vaults-plan.tfplan ./iac/key-vaults
+      - name: 'Delete Plan from Repo'
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: key-vaults-plan
+          failOnError: false
+      - name:  'Terraform Apply'
+        env:
+          ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.data-model-demo-eastus2-deployer }}
+          ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sadatamodeled-access-key }}
+        working-directory: ./iac/key-vaults
+        run: terraform apply -auto-approve "./key-vaults-plan.tfplan"
+      - name: 'Azure CLI logout'
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az logout
+            az cache purge
+            az account clear
+  plan-workload:
+    name: 'plan workload infrastructure'
+    needs: apply-key-vaults
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./iac/workload
+    env:
+      REMOTE_STATE_KEY: workload.terraform.tfstate
     steps:
       - name: 'Checkout Repo'
         uses: actions/checkout@v2
@@ -60,12 +164,12 @@ jobs:
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sadatamodeled-access-key }}
           TF_VAR_coin_api_key_app_setting: ${{ secrets.COIN_API_KEY_APP_SETTING }}
           TF_VAR_sql_admin_login: ${{ secrets.SQL_SERVER_ADMIN }}
-        run: terraform plan -out="./deployment-plan.tfplan"
+        run: terraform plan -out="./workload-plan.tfplan"
       - name: 'Upload Plan'
         uses: actions/upload-artifact@v2
         with:
-          name: deployment-plan
-          path: ./iac/deployment-plan.tfplan
+          name: workload-plan
+          path: ./iac//workload/workload-plan.tfplan
           retention-days: 1
       - name: 'Azure CLI logout'
         uses: azure/CLI@v1
@@ -74,14 +178,12 @@ jobs:
             az logout
             az cache purge
             az account clear
-  apply:
-    name: 'apply-deployments'
-    needs: plan
+  apply-workload:
+    name: 'apply workload infrastructure'
+    needs: plan-workload
     runs-on: ubuntu-latest
     env:
-      ARM_TENANT_ID: ${{ secrets.TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
-      ARM_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      REMOTE_STATE_KEY: workload.terraform.tfstate
     steps:
       - name: 'Checkout Repo'
         uses: actions/checkout@v2
@@ -108,20 +210,20 @@ jobs:
       - name: 'Download Plan'
         uses: actions/download-artifact@v2
         with:
-          name: deployment-plan
+          name: workload-plan
       - name: 'Move Plan'
-        run: mv ./deployment-plan.tfplan ./iac/
+        run: mv ./workload-plan.tfplan ./iac/workload/
       - name: 'Delete Plan from Repo'
         uses: geekyeggo/delete-artifact@v1
         with:
-          name: deployment-plan
+          name: workload-plan
           failOnError: false
       - name:  'Terraform Apply'
         env:
           ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.data-model-demo-eastus2-deployer }}
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sadatamodeled-access-key }}
-        working-directory: ./iac
-        run: terraform apply -auto-approve "./deployment-plan.tfplan"
+        working-directory: ./iac/workload
+        run: terraform apply -auto-approve "./workload-plan.tfplan"
       - name: 'Azure CLI logout'
         uses: azure/CLI@v1
         with:
@@ -130,8 +232,8 @@ jobs:
             az cache purge
             az account clear
   build-and-deploy:
-    name: 'build-and-deploy-function-app'
-    needs: apply
+    name: 'build and deploy function'
+    needs: apply-workload
     runs-on: ubuntu-latest
     defaults:
       run:

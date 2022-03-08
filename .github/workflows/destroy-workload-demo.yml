@@ -13,12 +13,12 @@ permissions:
   contents: read
 
 jobs:
-  destroy:
-    name: 'destroy deployments'
+  destroy-workload:
+    name: 'destroy workload infrastructure'
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./iac
+        working-directory: ./iac/workload
     env:
       ARM_TENANT_ID: ${{ secrets.TENANT_ID }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}

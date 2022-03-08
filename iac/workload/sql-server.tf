@@ -21,60 +21,15 @@ resource "random_password" "password" {
   override_special = "_%@"
 }
 
-resource "azurerm_key_vault" "sql_vault" {
-  resource_group_name         = data.azurerm_resource_group.rg.name
-  location                    = data.azurerm_resource_group.rg.location
-  tenant_id                   = data.azurerm_client_config.current.tenant_id
-  name                        = "sql-alert-meta"
-  enabled_for_disk_encryption = true
-  soft_delete_retention_days  = 7
-  purge_protection_enabled    = false
-  sku_name                    = "standard"
-  tags                        = var.tags
-}
-
-resource "azurerm_key_vault_access_policy" "sql_vault_deployer_acl" {
-  key_vault_id = azurerm_key_vault.sql_vault.id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = data.azurerm_client_config.current.object_id
-
-  secret_permissions = [
-    "Backup",
-    "Delete",
-    "Get",
-    "List",
-    "Purge",
-    "Recover",
-    "Restore",
-    "Set"
-  ]
+data "azurerm_key_vault" "sql_vault" {
+  resource_group_name = data.azurerm_resource_group.rg.name
+  name                = "sql-alert-meta"
 }
 
 resource "azurerm_key_vault_secret" "stored_secret" {
   name         = var.sql_admin_login
   value        = random_password.password.result
-  key_vault_id = azurerm_key_vault.sql_vault.id
-
-  depends_on = [
-    azurerm_key_vault_access_policy.sql_vault_deployer_acl
-  ]
-}
-
-resource "azurerm_key_vault_access_policy" "sql_admin_acl" {
-  key_vault_id = azurerm_key_vault.sql_vault.id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = data.azuread_user.sql_admin_user_account.object_id
-
-  secret_permissions = [
-    "Backup",
-    "Delete",
-    "Get",
-    "List",
-    "Purge",
-    "Recover",
-    "Restore",
-    "Set"
-  ]
+  key_vault_id = data.azurerm_key_vault.sql_vault.id
 }
 
 resource "azurerm_sql_server" "sql" {
