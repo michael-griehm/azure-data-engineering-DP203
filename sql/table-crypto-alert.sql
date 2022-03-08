@@ -1,0 +1,11 @@
+IF OBJECT_ID('[dbo].[CryptoAlerts]', 'U') IS NULL
+CREATE TABLE [dbo].[CryptoAlerts]
+(
+    CryptoAlertId BIGINT NOT NULL IDENTITY PRIMARY KEY,
+    UserId BIGINT NOT NULL FOREIGN KEY REFERENCES Users(UserId),
+    Symbol NVARCHAR(10) NOT NULL,
+    High DECIMAL (30,10) NOT NULL,
+    Low DECIMAL (30,10) NOT NULL
+);
+GO
+

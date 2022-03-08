@@ -33,7 +33,7 @@ jobs:
     steps:
       - name: 'Checkout Repo'
         uses: actions/checkout@v2
-      - name: 'Az CLI Login'
+      - name: 'Azure Login'
         uses: azure/login@v1
         with:
           tenant-id: ${{ secrets.TENANT_ID }}
@@ -85,7 +85,7 @@ jobs:
     steps:
       - name: 'Checkout Repo'
         uses: actions/checkout@v2
-      - name: 'Az CLI Login'
+      - name: 'Azure Login'
         uses: azure/login@v1
         with:
           tenant-id: ${{ secrets.TENANT_ID }}
@@ -145,7 +145,7 @@ jobs:
           dotnet-version: '3.1.x'
       - name: 'Build Function App'
         run: dotnet build --configuration Release --output ./output
-      - name: 'Az CLI Login'
+      - name: 'Azure Login'
         uses: azure/login@v1
         with:
           tenant-id: ${{ secrets.TENANT_ID }}

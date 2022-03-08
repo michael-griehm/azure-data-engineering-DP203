@@ -94,7 +94,7 @@ resource "azurerm_sql_firewall_rule" "example" {
 }
 
 resource "azurerm_sql_database" "db" {
-  name                = "db-alerts"
+  name                = "TradeAlerts"
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
   server_name         = azurerm_sql_server.sql.name
