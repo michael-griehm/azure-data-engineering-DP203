@@ -58,12 +58,12 @@ jobs:
         env:        
           ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.data-model-demo-eastus2-deployer }}
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sadatamodeled-access-key }}
-        run: terraform plan -out="./deployment-plan.tfplan"
+        run: terraform plan -out="./key-vaults.tfplan"
       - name: 'Upload Plan'
         uses: actions/upload-artifact@v2
         with:
           name: key-vaults-plan
-          path: ./iac/key-vaults/key-vaults-plan.tfplan
+          path: ./iac/key-vaults/key-vaults.tfplan
           retention-days: 1
       - name: 'Azure CLI logout'
         uses: azure/CLI@v1
@@ -106,7 +106,7 @@ jobs:
         with:
           name: key-vaults-plan
       - name: 'Move Plan'
-        run: mv ./key-vaults-plan.tfplan ./iac/key-vaults
+        run: mv ./key-vaults.tfplan ./iac/key-vaults
       - name: 'Delete Plan from Repo'
         uses: geekyeggo/delete-artifact@v1
         with:
@@ -117,7 +117,7 @@ jobs:
           ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.data-model-demo-eastus2-deployer }}
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sadatamodeled-access-key }}
         working-directory: ./iac/key-vaults
-        run: terraform apply -auto-approve "./key-vaults-plan.tfplan"
+        run: terraform apply -auto-approve "./key-vaults.tfplan"
       - name: 'Azure CLI logout'
         uses: azure/CLI@v1
         with:
@@ -164,12 +164,12 @@ jobs:
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sadatamodeled-access-key }}
           TF_VAR_coin_api_key_app_setting: ${{ secrets.COIN_API_KEY_APP_SETTING }}
           TF_VAR_sql_admin_login: ${{ secrets.SQL_SERVER_ADMIN }}
-        run: terraform plan -out="./workload-plan.tfplan"
+        run: terraform plan -out="./workload.tfplan"
       - name: 'Upload Plan'
         uses: actions/upload-artifact@v2
         with:
           name: workload-plan
-          path: ./iac//workload/workload-plan.tfplan
+          path: ./iac//workload/workload.tfplan
           retention-days: 1
       - name: 'Azure CLI logout'
         uses: azure/CLI@v1
@@ -212,7 +212,7 @@ jobs:
         with:
           name: workload-plan
       - name: 'Move Plan'
-        run: mv ./workload-plan.tfplan ./iac/workload/
+        run: mv ./workload.tfplan ./iac/workload/
       - name: 'Delete Plan from Repo'
         uses: geekyeggo/delete-artifact@v1
         with:
@@ -223,7 +223,7 @@ jobs:
           ARM_CLIENT_SECRET: ${{ steps.get-deployer-secret.outputs.data-model-demo-eastus2-deployer }}
           ARM_ACCESS_KEY: ${{ steps.get-deployer-secret.outputs.sadatamodeled-access-key }}
         working-directory: ./iac/workload
-        run: terraform apply -auto-approve "./workload-plan.tfplan"
+        run: terraform apply -auto-approve "./workload.tfplan"
       - name: 'Azure CLI logout'
         uses: azure/CLI@v1
         with:
