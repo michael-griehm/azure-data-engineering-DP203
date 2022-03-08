@@ -169,7 +169,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: workload-plan
-          path: ./iac//workload/workload.tfplan
+          path: ./iac/workload/workload.tfplan
           retention-days: 1
       - name: 'Azure CLI logout'
         uses: azure/CLI@v1

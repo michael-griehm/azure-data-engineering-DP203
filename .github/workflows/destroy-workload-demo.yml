@@ -6,7 +6,7 @@ env:
   REMOTE_STATE_RG: rg-data-model-demo-eastus2
   REMOTE_STATE_SA: sadatamodeled
   REMOTE_STATE_CONTAINER: data-model-remote-state-eastus2-demo
-  REMOTE_STATE_KEY: data-model.terraform.tfstate
+  REMOTE_STATE_KEY: workload.terraform.tfstate
 
 permissions:
   id-token: write
