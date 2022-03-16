@@ -1,4 +1,5 @@
 # azure-data-engineer-DP200
+
 A repo with notes and examples of the resources encapsulated in the Azure Data Engineer (DP-200) course.
 
 ## Basic Concepts
@@ -34,3 +35,13 @@ or
 Thus, if there is a network partition, one has to choose between consistency and availability. Note that consistency as defined in the CAP theorem is quite different from the consistency guaranteed in ACID database transactions.
 
 Eric Brewer argues that the often-used "two out of three" concept can be somewhat misleading because system designers only need to sacrifice consistency or availability in the presence of partitions, but that in many systems partitions are rare.
+
+## Batch Processing
+
+A method for running high volume, repetetive jobs.
+
+![Batch Processing Overview](images/databricks/batch-processing-overview.png)
+
+## Stream Processing
+
+![Streaming Overview](images/stream-analytics/streaming-overview.png)

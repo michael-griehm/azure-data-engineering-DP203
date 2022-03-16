@@ -6,7 +6,7 @@ Run the following command on the ./functions folder to add the Events Hub Extens
 
     dotnet add package Microsoft.Azure.WebJobs.Extensions.EventHubs --version 5.0
 
-## Reference a compiled assembly.
+## Reference a compiled assembly
 
 Put the assembly (.dll) in a folder under the root of the ./functions folder then reference it in the functions project file (.csproj) as shown below:
 
@@ -26,7 +26,7 @@ This Function pulls data from the CoinAPI RESTful APIs, shapes the data, and the
 
 #### Example of a returned Asset entity
 
-The number of total Assets returned with the list assets method: 14708 
+The number of total Assets returned with the list assets method: 14708
 
     {
         "asset_id": "BTC",

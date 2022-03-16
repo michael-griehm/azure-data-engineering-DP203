@@ -1,4 +1,4 @@
-# Cosmos DB
+# Azure Cosmos DB
 
 ## Consistency
 
