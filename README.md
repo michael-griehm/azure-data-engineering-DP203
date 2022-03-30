@@ -1,8 +1,14 @@
-# azure-data-engineer-DP200
+# Azure Data Engineer DP-203 Prep
 
-A repo with notes and examples of the resources encapsulated in the Azure Data Engineer (DP-200) course.
+A repo with notes and examples of the resources encapsulated in the Azure Data Engineer (DP-203) course.
 
-## Basic Concepts
+## Data Engineering Use Case
+
+In order to better learn and understand the concepts and resources encompassed in the DP-203 Microsoft certifcation exam, I have come up with a real world data engineering use case as described below.
+
+
+
+## Concepts
 
 ### ETL vs. ELT
 
@@ -36,12 +42,12 @@ Thus, if there is a network partition, one has to choose between consistency and
 
 Eric Brewer argues that the often-used "two out of three" concept can be somewhat misleading because system designers only need to sacrifice consistency or availability in the presence of partitions, but that in many systems partitions are rare.
 
-## Batch Processing
+### Batch Processing
 
 A method for running high volume, repetetive jobs.
 
 ![Batch Processing Overview](images/databricks/batch-processing-overview.png)
 
-## Stream Processing
+### Stream Processing
 
 ![Streaming Overview](images/stream-analytics/streaming-overview.png)
