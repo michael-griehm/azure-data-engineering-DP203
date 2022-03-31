@@ -6,7 +6,31 @@ A repo with notes and examples of the resources encapsulated in the Azure Data E
 
 In order to better learn and understand the concepts and resources encompassed in the DP-203 Microsoft certifcation exam, I have come up with a real world data engineering use case as described below.
 
+### User Narratives
 
+As a crypto trader
+In order to improve crypto trading gains
+I want a system to notify me when a crypto currency has reached predefined price thresholds (low and high)
+
+As a crypto trader
+In order to improve crypto trading gains
+I want a system to provide insights on crypto currencies to purchase due to their price trends
+
+### System Architecture
+
+I have found a RESTful API that allows me to request crypto currency pricing in realtime.
+
+I would like to convert the results from the crypto currency API into a data stream and then do real-time analysis on the stream as well as capture the events into a data lake for near real time analysis.
+
+Below is a diagram of the system design for accomplishing these goals.
+
+![Workload Architecture](workload-diagrams/event-hub-capture-ingestion.drawio.svg)
+
+In this design, the 3 main processing components have been decoupled and the resources for each processing component are housed in seperate Resource Groups and GitHub Repos.
+
+1. [Data Streaming](https://github.com/michael-griehm/azure-data-streams)
+2. [Data Lake](https://github.com/michael-griehm/azure-data-lake)
+3. [Data Processing, Refinement, and Analysis](https://github.com/michael-griehm/azure-databricks)
 
 ## Concepts
 
