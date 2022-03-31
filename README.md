@@ -8,13 +8,13 @@ In order to better learn and understand the concepts and resources encompassed i
 
 ### User Narratives
 
-As a crypto trader
-In order to improve crypto trading gains
-I want a system to notify me when a crypto currency has reached predefined price thresholds (low and high)
+    As a crypto trader
+    In order to improve crypto trading gains
+    I want a system to notify me when a crypto currency has reached predefined price thresholds (low and high)
 
-As a crypto trader
-In order to improve crypto trading gains
-I want a system to provide insights on crypto currencies to purchase due to their price trends
+    As a crypto trader
+    In order to improve crypto trading gains
+    I want a system to provide insights on crypto currencies to purchase due to their price trends
 
 ### System Architecture
 
