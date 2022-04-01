@@ -2,6 +2,10 @@
 
 A repo with notes and examples of the resources encapsulated in the Azure Data Engineer (DP-203) course.
 
+## A Typical Data Management Platform Design
+
+![A Typical Data Management Platform Design](images/typical-data-flow-diagram.png)
+
 ## Data Engineering Use Case
 
 In order to better learn and understand the concepts and resources encompassed in the DP-203 Microsoft certifcation exam, I have come up with a real world data engineering use case as described below.
