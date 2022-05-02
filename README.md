@@ -1,6 +1,6 @@
 # Azure Data Engineer DP-203 Prep
 
-A repo with notes and examples of the resources encapsulated in the Azure Data Engineer (DP-203) course.
+A repo with notes and links to repos that contain examples of the resources encapsulated in the Azure Data Engineer (DP-203) course.
 
 ## A Typical Data Management Platform Design
 
@@ -9,6 +9,10 @@ A repo with notes and examples of the resources encapsulated in the Azure Data E
 ## Data Engineering Use Case
 
 In order to better learn and understand the concepts and resources encompassed in the DP-203 Microsoft certifcation exam, I have come up with a real world data engineering use case as described below.
+
+### Use Case
+
+You are a cloud data engineer at a wealth management company.  The company is beginning to include crypto currencies within their wealth management portfolio.  As part of this initiative the company needs a system to track crypto currency prices and create alerts when certain price thresholds have been hit or when the system detects a good buy opportunity.
 
 ### User Narratives
 
@@ -22,9 +26,9 @@ In order to better learn and understand the concepts and resources encompassed i
 
 ### System Architecture
 
-I have found a RESTful API that allows me to request crypto currency pricing in realtime.
+There is a RESTful API that allows clients to request crypto currency pricing in realtime and on a frequent basis.
 
-I would like to convert the results from the crypto currency API into a data stream and then do real-time analysis on the stream as well as capture the events into a data lake for near real time analysis.
+We will convert the results from the crypto currency API into a data stream and then do real-time analysis on the data stream as well as capture the events into a data lake for near real-time analysis.
 
 Below is a diagram of the system design for accomplishing these goals.
 
