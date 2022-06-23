@@ -9,6 +9,7 @@
 
 Azure Synapse Analytics combines the following Azure Resources together to provide enterprise grade data modeling and analytics solutions for big data:
 
+- Azure Data Factory Pipelines
 - Azure Data Lake Storage
 - Azure SQL Data Warehouse
 - Azure Analytics
@@ -26,6 +27,23 @@ Benefits:
 - Code-free Ability
 - Data Security
 - Enterprise Data Warehousing
+
+## Azure Synapse Workspace
+
+The development and management user interface is the Azure Synapse Workspace.
+
+It contists of 5 activity Hubs:
+
+- Data
+- Develop
+  - Create the following type of development artifacts
+    - SQL Script
+    - Notebook
+    - Data flow
+    - Apache Spark job definition
+- Integrate
+- Monitor
+- Manage
 
 ## Azure SQL Data Warehouse (Azure Synapse Pool)
 
@@ -91,4 +109,3 @@ MPP Engine is split up into 60 different nodes for processing.
 #### Sizing Partitions
 
 ![Sizing Partitions](.\images\synapse-analytics\sizing-partitions.png)
-
